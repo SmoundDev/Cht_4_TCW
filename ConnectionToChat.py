@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import openai
 import os
 
-import config
 import random
 import asyncio
 
@@ -17,7 +16,9 @@ from rich.table import Table
 import time
 import pyttsx3
 
+import config
 from Helpers.routes_files import file_route
+import ContextOfTraining as __ct
 
 # imports para el aprendizaje básico natural de texto
 # import nltk
@@ -34,40 +35,6 @@ for voice in voices:
 _global_file = ""
 _response_contains = []
 
-def get_context_by_train(__entrenamiento_elegido):
-
-    if config.trining_mode:
-        textFisrtPromt = ""
-
-        if __entrenamiento_elegido == "p":
-            _context = {"role": "system",
-                        "content": "Eres un tecnico reparador de celulares, no puedes dar respuestas a contextos "
-                        + f"fuera de la reparación de smartphones, te llamas {config.ai_name}"}
-            textFisrtPromt = f"💬 Bienvenido, mi nombre es {config.ai_name} el Asistente virtual TCW, ¿en que puedo ayudarte?"
-
-        elif __entrenamiento_elegido == "r":
-            _context = {"role": "system",
-                        "content": "Eres un investigador que realiza una encuesta de preguntas como si fuera un usuario de "
-                        + f"smartphones que presenta distintas fallas o descomposturas. realiza la pregunta sí el mensaje dice"
-                        + " 'next_question'"}
-            textFisrtPromt = ""
-        
-        print("[bold green] ----- --------Tryining NO-------- ----- [/bold green]")
-        
-    else:
-        textFisrtPromt = f"💬 Bienvenido, mi nombre es {config.ai_name} el Asistente virtual TCW, ¿en que puedo ayudarte?"
-
-        # comentar en produccion
-        _context = {"role": "system",
-                    "content": "Eres un programador especializado en python, node.js, mongoDB,sql,react, angular y c#, sí el usuario "+
-                    "ecribe save_response guardas la respuesta en la siguiente ruta \"/data_collectors/save_answer.csv\""}
-        
-        print("[bold Yellow] ----- --------Tryining OFF-------- ----- [/bold Yellow]")
-        
-
-    return [_context, textFisrtPromt]
-
-
 def main():
 
     print("[bold green] ----- -------TCW Asistencia Online------- ----- [/bold green]")
@@ -76,24 +43,20 @@ def main():
     table = Table("Comando", "Descripción")
     table.add_row("exit", "Salir de la aplicación")
     table.add_row("new", "Iniciar nueva conversación")
-    table.add_row("voice_off", "Detiene la lectura de las respuestas")
-    table.add_row("voice_on", "Inicia la lectura de las respuestas")
+    table.add_row("voice_off", "Detiene la lectura de las respuestas(on dev)")
+    table.add_row("voice_on", "Inicia la lectura de las respuestas(on dev)")
     
     print(table)
     print("[bold green] ----- ----------------------------------- ----- [/bold green]")
-
-    # #comentar en produccion
-    # textFisrtPromt = "💬 Bienvenido al Asistente virtual TCW, ¿en que puedo ayudarte?"
-    # _textFisrtPromt = "💬 Bienvenido al Asistente virtual TCW, ¿en que puedo ayudarte?"
 
     # Aquí vamoa elegír el tipo de entrenamiento que el usuario realizará
     print("[bold yellow] Tipos de Entrenamiento: [/bold yellow]")
 
     table = Table("Comando", "Descripción")
     table.add_row("p", "Preguntas técnicas")
-    table.add_row("r", "Respuesta técnicas")
-    table.add_row("rw", "Palabras relacionadas")
-    table.add_row("nw", "Palabras no relacionadas")
+    table.add_row("r", "Respuesta técnicas(on dev)")
+    table.add_row("rw", "Palabras relacionadas(on dev)")
+    table.add_row("nw", "Palabras no relacionadas(on dev)")
     print(table)
 
     tipo_entrenamiento_elegido = input(
@@ -102,26 +65,9 @@ def main():
     # Definir tu clave de API como una variable de entorno
     openai.api_key = config.api_key
 
-    _context, textFisrtPromt = get_context_by_train(tipo_entrenamiento_elegido)
+    _context, textFisrtPromt = __ct.get_context_by_train(tipo_entrenamiento_elegido)
     _textFisrtPromt = textFisrtPromt
-    # # Contexto del asistente
-    # _context = {"role": "system",
-    #             "content": "Eres un tecnico reparador de celulares, no puedes dar respuestas a contextos "
-    #             + "fuera de la reparación de smartphones, te llamas 'Spartan'"}
-
-    # #comentar en produccion
-    # _context = {"role": "system",
-    #             "content": "Eres un programador especializado en python, node.js, mongoDB,sql,react, angular y c#"}
-
-    # _context = {"role":"system",
-    #             "content":"Puedes brindar información sobre accesorios celulares"}
-
-    # _context = {"role":"system",
-    #             "content":"Puedes asistir a personas en tareas básicas como por ejemplo: enviar un email, apagar el wifi, quitar el modo silencio, entre otras tareas de indole soporte a nivel software"}
-
-    # _context = {"role":"system",
-    #             "content":"Eres un asistente muy util para personas poco familiarizadas con el uso de smartphones"}
-
+   
     # # añadimos el Contexto del asistente que se recibe acorde al tipo de entrenamiento
     messages = [_context]
 
@@ -137,7 +83,8 @@ def main():
         messages.append({"role": "user", "content": _content})
 
         # Validador de texto antes de enviar el prompt
-
+            #aqui se pondrá funcionalidad para que el texto sea validado respecto a los datos entrenados
+            
         # Enviar una solicitud a la API para generar texto
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", messages=messages,
@@ -161,23 +108,12 @@ def main():
 
 def type_printer(random_number, response_assistant):
     print(f"[bold red]** [/bold red] se dió la respuesta #{random_number}:\n")
-    print("[bold green]-> [/bold green]", end=' ')
-
-    # loop = asyncio.get_event_loop()
-            
+    print("[bold green]-> [/bold green]", end='')
+    
     for char in response_assistant:
         print(f"[cyan]{char}[/cyan]", end='', flush=True)
         time.sleep(0.07)
-        
-    # loop.run_until_complete(leer_respuesta(response_assistant))
-    # leer_respuesta(response_assistant)
 
-# Función para leer una respuesta
-# async def leer_respuesta(respuesta):
-#     # Convertimos la respuesta a voz
-#     voice_engine.say(respuesta)
-#     # Reproducimos la voz
-#     voice_engine.runAndWait()
 
 def __prompt(textFisrtPromt) -> str:
     _textFisrtPromt = "💬 Bienvenido al Asistente virtual TCW, ¿en que puedo ayudarte?"

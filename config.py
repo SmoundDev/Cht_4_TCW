@@ -1,6 +1,6 @@
 
-api_key = "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"
+api_key = "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"
 
-ai_name = "Andreina"
+ai_name = "Spartan"
 
 trining_mode = False
