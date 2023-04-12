@@ -1,5 +1,5 @@
 
-api_key = "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"
+api_key = "sk-VMUVO_9BVC8DwI13g3C0TT3_BlbkFJCFRPI7dUYognoXdBgd2X"
 
 
 trining_mode = False
