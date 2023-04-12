@@ -64,7 +64,7 @@ def main():
         "Por favor, Elija un tipo de entrenamiento utilizando el comando deseado: ")
 
     # Definir tu clave de API como una variable de entorno
-    openai.api_key = config.api_key
+    openai.api_key = config.aky.replace("_","");
 
     _context, textFisrtPromt = __ct.get_context_by_train(tipo_entrenamiento_elegido)
     _textFisrtPromt = textFisrtPromt
