@@ -15,6 +15,7 @@ from rich import print
 from rich.table import Table
 import time
 import pyttsx3
+import gc
 
 import config
 from Helpers.routes_files import file_route
@@ -94,6 +95,8 @@ def main():
         random_number = random.randint(0, 2)
 
         response_assistant = response.choices[random_number].message.content
+        
+        gc.collect()
 
         # Pasamos el contexto de las respuestas de la conversación
         messages.append({"role": "assistant", "content": response_assistant})
@@ -131,7 +134,7 @@ def __prompt(textFisrtPromt) -> str:
     elif prompt == 'voice_off':
         voice_engine.stop()
     elif prompt == 'voice_on':
-        voice_engine.stop()
+        voice_engine.init()
         
     return prompt
 

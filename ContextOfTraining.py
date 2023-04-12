@@ -1,6 +1,13 @@
 import config
+from  config import ai_variables as aiv 
+
+import random
 
 def get_context_by_train(__entrenamiento_elegido):
+    
+    lst_names = aiv.ai_surname
+    
+    random_number = random.randint(0,len(lst_names)-1)
 
     if config.trining_mode:
         textFisrtPromt = ""
@@ -8,8 +15,8 @@ def get_context_by_train(__entrenamiento_elegido):
         if __entrenamiento_elegido == "p":
             _context = {"role": "system",
                         "content": "Eres un tecnico reparador de celulares, no puedes dar respuestas a contextos "
-                        + f"fuera de la reparación de smartphones, te llamas {config.ai_name}"}
-            textFisrtPromt = f"💬 Bienvenido, mi nombre es {config.ai_name} el Asistente virtual TCW, ¿en que puedo ayudarte?"
+                        + f"fuera de la reparación de smartphones, te llamas {aiv.ai_name}"}
+            textFisrtPromt = f"💬 Bienvenido, soy {aiv.ai_name} {lst_names[random_number]} el Asistente virtual TCW, ¿en que puedo ayudarte?"
 
         elif __entrenamiento_elegido == "r":
             _context = {"role": "system",
@@ -17,11 +24,15 @@ def get_context_by_train(__entrenamiento_elegido):
                         + f"smartphones que presenta distintas fallas o descomposturas. realiza la pregunta sí el mensaje dice"
                         + " 'next_question'"}
             textFisrtPromt = ""
-        
+        elif __entrenamiento_elegido == "rw":
+            _context = {
+                "role":"system",
+                "content":""
+            }
         print("[bold green] ----- --------Tryining NO-------- ----- [/bold green]")
         
     else:
-        textFisrtPromt = f"💬 Bienvenido, mi nombre es {config.ai_name} el Asistente virtual TCW, ¿en que puedo ayudarte?"
+        textFisrtPromt = f"💬 Bienvenido, soy {aiv.ai_name} {lst_names[random_number]} el Asistente virtual TCW, ¿en que puedo ayudarte?"
 
         # comentar en produccion
         _context = {"role": "system",
