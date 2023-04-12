@@ -1,5 +1,5 @@
-import config
-from  config import ai_variables as aiv 
+import configurations.config as config
+from  configurations.config import ai_variables as aiv 
 
 import random
 

@@ -17,7 +17,7 @@ import time
 import pyttsx3
 import gc
 
-import config
+import configurations.config as config
 from Helpers.routes_files import file_route
 import ContextOfTraining as __ct
 
