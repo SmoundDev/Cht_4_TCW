@@ -81,20 +81,14 @@ def main():
             messages = [_context]
             _content = __prompt(_textFisrtPromt)
 
-        messages.append({"role": "user", "content": _content})
 
         # Validador de texto antes de enviar el prompt
             #aqui se pondrá funcionalidad para que el texto sea validado respecto a los datos entrenados
             
         # Enviar una solicitud a la API para generar texto
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=messages,
-            n=3
-        )
-
         random_number = random.randint(0, 2)
-
-        response_assistant = response.choices[random_number].message.content
+        
+        response_assistant = send_to_ai(messages,_content,random_number)
         
         gc.collect()
 
@@ -108,6 +102,19 @@ def main():
 
         textFisrtPromt = "💬 ¿Algo más en lo que pueda ayudarte?"
 
+def send_to_ai(_messages,_prompt,_random_number):
+    
+    _messages.append({"role": "user", "content": _prompt})
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", messages=_messages,
+        n=3
+    )
+
+    response_assistant = response.choices[_random_number].message.content
+    
+    return response_assistant
+    
 
 def type_printer(random_number, response_assistant):
     print(f"[bold red]** [/bold red] se dió la respuesta #{random_number}:\n")
