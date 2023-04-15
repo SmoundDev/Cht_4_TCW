@@ -7,6 +7,6 @@ trining_mode = False
 
 class ai_variables:
     
-    ai_name = "Spartan"
+    ai_name = "El Spartan"
 
-    ai_surname = ["Yoel","Patan","Pale","Chris","Alberto","Nordix","Condor","Robert"]
+    ai_surname = ["Yoel","Patan","Pale","Tocino","Charly","Nordix","Condor","Robert"]
