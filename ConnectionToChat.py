@@ -66,7 +66,7 @@ def main():
     # Definir tu clave de API como una variable de entorno
     openai.api_key = config.aky.replace("_","");
 
-    _context, textFisrtPromt = __ct.get_context_by_train(tipo_entrenamiento_elegido)
+    _context, textFisrtPromt = __ct.get_context_by_train(tipo_entrenamiento_elegido,config.trining_mode)
     _textFisrtPromt = textFisrtPromt
    
     # # añadimos el Contexto del asistente que se recibe acorde al tipo de entrenamiento
@@ -105,6 +105,8 @@ def main():
 def send_to_ai(_messages,_prompt,_random_number):
     
     _messages.append({"role": "user", "content": _prompt})
+    openai.api_key = config.aky.replace("_","");
+    
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=_messages,

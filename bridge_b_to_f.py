@@ -1,42 +1,40 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import random as _r
+import json
 
 import ConnectionToChat as _c
-import ContextOfTraining as __ct
+import ContextOfTraining as _ct
 
 class MyServer(BaseHTTPRequestHandler):
         
     def do_POST(self):
         
-        print(f"peticion recibida:\n{self}");
+        content_length = int(self.headers['Content-Length'])
+        body = self.rfile.read(content_length)
         
-        data = self.rfile.read();
+        data = json.loads(body.decode('utf-8'))
         
         print(f"peticion recibida:\n{data}");
         
-        print(data)
-        
-        data = data.decode()
-        
-        print(data)
-        
-        _prompt = data.decode().replace("prompt=",'')
-        tipo_entrenamiento_elegido = data.decode().replace("tipoent=",'')
-        
+        _prompt = data['prompt']
+        tipo_entrenamiento_elegido = data['tipoent']
         
         # tipo_entrenamiento_elegido, _prompt
         random_number = _r.randint(0, 2)
         
-        _context = __ct.get_context_by_train(tipo_entrenamiento_elegido)
+        _context = _ct.get_context_by_train(tipo_entrenamiento_elegido,False)
         
-        messages = [_context]
+        messages = [_context[0]]
+        
+        if "prueba" in _prompt:
+            _prompt = "Describe una criatura mitologica no descrita hasta ahora"
         
         assistant_response = _c.send_to_ai(messages,_prompt,random_number)
         
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin","*")
         self.end_headers();
-        self.wfile.write(assistant_response)
+        self.wfile.write(assistant_response.encode())
 
 def main():
     PORT = 3002

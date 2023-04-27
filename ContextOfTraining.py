@@ -3,13 +3,13 @@ from  configurations.config import ai_variables as aiv
 
 import random
 
-def get_context_by_train(__entrenamiento_elegido):
+def get_context_by_train(__entrenamiento_elegido,tryning_mode):
     
     lst_names = aiv.ai_surname
     
     random_number = random.randint(0,len(lst_names)-1)
 
-    if config.trining_mode:
+    if tryning_mode:
         textFisrtPromt = ""
 
         if __entrenamiento_elegido == "p":
@@ -36,8 +36,7 @@ def get_context_by_train(__entrenamiento_elegido):
 
         # comentar en produccion
         _context = {"role": "system",
-                    "content": "Eres un programador especializado en python, node.js, mongoDB,sql,react, angular y c#, sí el usuario "+
-                    "ecribe save_response guardas la respuesta en la siguiente ruta \"/data_collectors/save_answer.csv\""}
+                    "content": "Eres un programador especializado en python, node.js, mongoDB,sql,react, angular y c#"}
         
         print("[bold Yellow] ----- --------Tryining OFF-------- ----- [/bold Yellow]")
         
