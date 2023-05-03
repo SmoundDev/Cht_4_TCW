@@ -40,7 +40,7 @@ def main():
     PORT = 3002
     server_address = ('localhost', PORT)
     server = HTTPServer(server_address, MyServer)
-    print('Iniciando servidor en el puerto {0}\n'.format(PORT))
+    print(f'Iniciando servidor en el puerto {PORT}\n')
     server.serve_forever()
 
 if __name__ == '__main__':
