@@ -4,7 +4,6 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-import openai
 import os
 
 import random
@@ -19,19 +18,20 @@ import gc
 
 import configurations.config as config
 from Helpers.routes_files import file_route
+from Helpers.SendTo import SendToAi as sta
 import ContextOfTraining as __ct
 
 # imports para el aprendizaje básico natural de texto
 # import nltk
 # nltk.download('wordnet')
 
-voice_engine = pyttsx3.init(driverName='sapi5') # Utilizamos el motor de síntesis de voz SAPI5
-# Obtenemos las voces disponibles en el sistema
-voices = voice_engine.getProperty('voices')
-for voice in voices:
-    if voice.name == 'Microsoft Zira Desktop':
-        voice_engine.setProperty('voice', voice.id)
-        break
+# voice_engine = pyttsx3.init(driverName='sapi5') # Utilizamos el motor de síntesis de voz SAPI5
+# # Obtenemos las voces disponibles en el sistema
+# voices = voice_engine.getProperty('voices')
+# for voice in voices:
+#     if voice.name == 'Microsoft Zira Desktop':
+#         voice_engine.setProperty('voice', voice.id)
+#         break
 
 _global_file = ""
 _response_contains = []
@@ -63,18 +63,16 @@ def main():
     tipo_entrenamiento_elegido = input(
         "Por favor, Elija un tipo de entrenamiento utilizando el comando deseado: ")
 
-    # Definir tu clave de API como una variable de entorno
-    openai.api_key = config.aky.replace("_","");
 
-    _context, textFisrtPromt = __ct.get_context_by_train(tipo_entrenamiento_elegido,config.trining_mode)
-    _textFisrtPromt = textFisrtPromt
+    _context = __ct.get_context_by_train(tipo_entrenamiento_elegido,config.trining_mode)
+    _textFisrtPromt = _context[1]
    
     # # añadimos el Contexto del asistente que se recibe acorde al tipo de entrenamiento
-    messages = [_context]
+    messages = [_context[0]]
 
     while True:
-
-        _content = __prompt(textFisrtPromt)
+        
+        _content = __prompt(_textFisrtPromt)
 
         if _content == "new":
             print("🆕 Nueva conversación creada")
@@ -88,7 +86,7 @@ def main():
         # Enviar una solicitud a la API para generar texto
         random_number = random.randint(0, 2)
         
-        response_assistant = send_to_ai(messages,_content,random_number)
+        response_assistant = sta.send_to_ai(messages,_content,random_number)
         
         gc.collect()
 
@@ -102,24 +100,10 @@ def main():
 
         textFisrtPromt = "💬 ¿Algo más en lo que pueda ayudarte?"
 
-def send_to_ai(_messages,_prompt,_random_number):
-    
-    _messages.append({"role": "user", "content": _prompt})
-    openai.api_key = config.aky.replace("_","");
-    
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", messages=_messages,
-        n=3
-    )
-
-    response_assistant = response.choices[_random_number].message.content
-    
-    return response_assistant
-    
 
 def type_printer(random_number, response_assistant):
-    print(f"[bold red]** [/bold red] se dió la respuesta #{random_number}:\n")
+    #descomentar para pruebas
+    #  print(f"[bold red]** [/bold red] se dió la respuesta #{random_number}:\n")
     print("[bold green]-> [/bold green]", end='')
     
     for char in response_assistant:
@@ -140,10 +124,7 @@ def __prompt(textFisrtPromt) -> str:
             raise typer.Abort()
 
         return __prompt(_textFisrtPromt)
-    elif prompt == 'voice_off':
-        voice_engine.stop()
-    elif prompt == 'voice_on':
-        voice_engine.init()
+    
         
     return prompt
 
