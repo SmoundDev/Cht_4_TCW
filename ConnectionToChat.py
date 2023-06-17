@@ -34,6 +34,7 @@ import ContextOfTraining as __ct
 #         break
 
 _global_file = ""
+respondeAI = False
 _response_contains = []
 
 def main():
@@ -71,12 +72,15 @@ def main():
     messages = [_context[0]]
 
     while True:
+        global respondeAI;
         
         _content = __prompt(_textFisrtPromt)
 
         if _content == "new":
+            respondeAI = False;
+            
             print("🆕 Nueva conversación creada")
-            messages = [_context]
+            messages = [_context[0]]
             _content = __prompt(_textFisrtPromt)
 
 
@@ -90,29 +94,41 @@ def main():
         
         gc.collect()
 
+        tam_respuesta =   len(response_assistant)
         # Pasamos el contexto de las respuestas de la conversación
-        messages.append({"role": "assistant", "content": response_assistant})
+        if tam_respuesta < 1000:
+            messages.append({"role": "assistant", "content": response_assistant})
 
         if not tipo_entrenamiento_elegido == "r":
            
+            textFisrtPromt = "💬 ¿Algo más en lo que pueda ayudarte?"
             # Imprimir la respuesta generada por la API
-            type_printer(random_number, response_assistant)
-
-        textFisrtPromt = "💬 ¿Algo más en lo que pueda ayudarte?"
+            type_printer(random_number, response_assistant, textFisrtPromt)
 
 
-def type_printer(random_number, response_assistant):
+
+def type_printer(random_number, response_assistant, textFisrtPromt):
     #descomentar para pruebas
+    global _textFirstPrompt, respondeAI 
     #  print(f"[bold red]** [/bold red] se dió la respuesta #{random_number}:\n")
     print("[bold green]-> [/bold green]", end='')
     
     for char in response_assistant:
         print(f"[cyan]{char}[/cyan]", end='', flush=True)
         time.sleep(0.07)
-
+    
+    respondeAI = True
 
 def __prompt(textFisrtPromt) -> str:
-    _textFisrtPromt = "💬 Bienvenido al Asistente virtual TCW, ¿en que puedo ayudarte?"
+    
+    global respondeAI
+    
+    if respondeAI:
+        
+        _textFisrtPromt = "💬 ¿Algo más en lo que pueda ayudarte?"
+        
+    else:
+        _textFisrtPromt = "💬 Bienvenido al Asistente virtual TCW, ¿en que puedo ayudarte?"
 
     prompt = typer.prompt(f"\n {textFisrtPromt}")
 
@@ -120,6 +136,7 @@ def __prompt(textFisrtPromt) -> str:
         exit = typer.confirm(
             "✋ [red]¿Estás seguro de terminar esta conversación?[/red]")
         if exit:
+            respondeAI = False;
             print("👋 Fue un placer atenderte, ¡vuelve pronto!")
             raise typer.Abort()
 

@@ -58,6 +58,12 @@ def get_context_by_train(__entrenamiento_elegido,tryning_mode):
         _context = {"role": "system",
                     "content": "Eres un programador especializado en python, node.js, mongoDB,sql,react, angular y c#"}
         
+        
+        # # comentar en produccion
+        # _context = {"role": "system",
+        #             "content": "Eres un Diseñador especializado en hacer animaciones svg y convirtiendolas en GIF"}
+        
+        
         print("[bold Yellow] ----- --------Tryining OFF-------- ----- [/bold Yellow]")
         _log_from = "try_off"
 
