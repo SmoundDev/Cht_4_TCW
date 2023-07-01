@@ -114,7 +114,7 @@ def type_printer(random_number, response_assistant, textFisrtPromt):
     print("[bold green]-> [/bold green]", end='')
     
     for char in response_assistant:
-        print(f"[cyan]{char}[/cyan]", end='', flush=True)
+        print(f"[turquoise2]{char}[/turquoise2]", end='', flush=True)
         time.sleep(0.07)
     
     respondeAI = True

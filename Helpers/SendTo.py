@@ -1,5 +1,6 @@
 import openai
 import configurations.config as config
+from rich import print
 
 class SendToAi:
     def send_to_ai(_messages, _prompt, _random_number):
@@ -17,7 +18,7 @@ class SendToAi:
         # response_assistant = response.choices[_random_number].message.content
         
         num_tokens = len(response_assistant.split())
-        print(f'La respuesta contiene {num_tokens} tokens')
+        print(f'[bold gold1]La respuesta contiene {num_tokens} tokens [/bold gold1]')
 
 
         return response_assistant
